@@ -22,6 +22,7 @@ const NUM_OF_ITEMS = NUMBER_OF_PAGES * 2 + 1; // NUMBER_OF_PAGES before + NUMBER
 export interface WeekCalendarProps extends CalendarListProps {
   /** whether to have shadow/elevation for the calendar */
   allowShadow?: boolean;
+  scrollEnabled?: boolean;
 }
 
 /**
@@ -226,7 +227,7 @@ const WeekCalendar = (props: WeekCalendarProps) => {
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled
-            scrollEnabled
+            scrollEnabled={props.scrollEnabled}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             initialScrollIndex={NUMBER_OF_PAGES}
