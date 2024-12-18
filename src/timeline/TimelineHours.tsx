@@ -28,6 +28,7 @@ export interface TimelineHoursProps {
   numberOfDays: number;
   timelineLeftInset?: number;
   testID?: string;
+  halfHourLines?: boolean;
 }
 
 const dimensionWidth = constants.screenWidth;
@@ -48,6 +49,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
     numberOfDays = 1,
     timelineLeftInset = 0,
     testID,
+    halfHourLines = true
   } = props;
 
   const lastLongPressEventTime = useRef<NewEventTime>();
@@ -60,7 +62,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
       let timeText;
 
       if (i === start) {
-        timeText = '';
+        timeText = '00:00';
       } else if (i < 12) {
         timeText = !format24h ? `${i} AM` : `${i}:00`;
       } else if (i === 12) {
@@ -120,20 +122,18 @@ const TimelineHours = (props: TimelineHoursProps) => {
             <Text key={`timeLabel${time}`} style={[styles.timeLabel, {top: offset * index - 6, width: timelineLeftInset - 16}]}>
               {timeText}
             </Text>
-            {time === start ? null : (
               <View
                 key={`line${time}`}
                 testID={`${testID}.${time}.line`}
                 style={[styles.line, {top: offset * index, width: dimensionWidth - EVENT_DIFF, left: timelineLeftInset - 16}]}
               />
-            )}
-            {
+            {halfHourLines ?
               <View
                 key={`lineHalf${time}`}
                 testID={`${testID}.${time}.lineHalf`}
                 style={[styles.line, {top: offset * (index + 0.5), width: dimensionWidth - EVENT_DIFF, left: timelineLeftInset - 16}]}
               />
-            }
+              : null}
           </React.Fragment>
         );
       })}

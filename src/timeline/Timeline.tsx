@@ -115,6 +115,10 @@ export interface TimelineProps {
   timelineLeftInset?: number;
   /** Identifier for testing */
   testID?: string;
+  /**
+   * Controls whether half hour tick lines should show up or not
+  */
+  halfHourLines?: boolean;
 }
 
 const Timeline = (props: TimelineProps) => {
@@ -143,6 +147,7 @@ const Timeline = (props: TimelineProps) => {
     numberOfDays = 1,
     timelineLeftInset = 0,
     testID,
+    halfHourLines = true
   } = props;
 
   const pageDates = useMemo(() => {
@@ -267,6 +272,7 @@ const Timeline = (props: TimelineProps) => {
         numberOfDays={numberOfDays}
         timelineLeftInset={timelineLeftInset}
         testID={`${testID}.hours`}
+        halfHourLines={halfHourLines}
       />
       {times(numberOfDays, renderTimelineDay)}
     </ScrollView>
