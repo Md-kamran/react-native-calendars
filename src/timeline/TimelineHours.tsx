@@ -6,7 +6,7 @@ import {View, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet} 
 
 import constants from '../commons/constants';
 import {buildTimeString, calcTimeByPosition, calcDateByPosition} from './helpers/presenter';
-import {buildUnavailableHoursBlocks, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
+import {backgroundHours, buildBackgroundFillHoursBlocks, buildUnavailableHoursBlocks, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
 
 interface NewEventTime {
   hour: number;
@@ -22,6 +22,7 @@ export interface TimelineHoursProps {
   onBackgroundLongPress?: (timeString: string, time: NewEventTime) => void;
   onBackgroundLongPressOut?: (timeString: string, time: NewEventTime) => void;
   unavailableHours?: UnavailableHours[];
+  backgroundFillHours?: backgroundHours[];
   unavailableHoursColor?: string;
   styles: {[key: string]: ViewStyle | TextStyle};
   width: number;
@@ -41,6 +42,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
     end = 24,
     date,
     unavailableHours,
+    backgroundFillHours,
     unavailableHoursColor,
     styles,
     onBackgroundLongPress,
@@ -56,6 +58,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
   // const offset = this.calendarHeight / (end - start);
   const offset = HOUR_BLOCK_HEIGHT;
   const unavailableHoursBlocks = buildUnavailableHoursBlocks(unavailableHours, {dayStart: start, dayEnd: end});
+  const backgroundHoursBlocks = buildBackgroundFillHoursBlocks(backgroundFillHours, {dayStart: start, dayEnd: end});
 
   const hours = useMemo(() => {
     return range(start, end + 1).map(i => {
@@ -102,7 +105,18 @@ const TimelineHours = (props: TimelineHoursProps) => {
   return (
     <>
       <TouchableWithoutFeedback onLongPress={handleBackgroundPress} onPressOut={handlePressOut}>
-        <View style={StyleSheet.absoluteFillObject} />
+        <View style={StyleSheet.absoluteFillObject} >
+          {backgroundHoursBlocks.map((block, index) => (
+            <View
+              key={index}
+              style={[
+                styles.backgroundFillHoursBlock,
+                block,
+                {left: timelineLeftInset}
+              ]}
+            ></View>
+          ))}
+        </View>
       </TouchableWithoutFeedback>
       {unavailableHoursBlocks.map((block, index) => (
         <View

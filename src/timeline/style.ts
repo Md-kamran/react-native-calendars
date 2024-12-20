@@ -73,6 +73,10 @@ export default function styleConstructor(theme: Theme = {}, calendarHeight: numb
       right: 0,
       backgroundColor: UNAVAILABLE_HOURS_BLOCK_COLOR
     },
+    backgroundFillHoursBlock: {
+      position: 'absolute',
+      right: 0,
+    },
     event: {
       opacity: 1,
       paddingLeft: 4,

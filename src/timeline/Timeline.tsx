@@ -11,7 +11,7 @@ import {generateDay} from '../dateutils';
 import {getCalendarDateString} from '../services';
 import {Theme} from '../types';
 import styleConstructor from './style';
-import {populateEvents, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
+import {populateEvents, HOUR_BLOCK_HEIGHT, UnavailableHours, backgroundHours} from './Packer';
 import {calcTimeOffset} from './helpers/presenter';
 import TimelineHours, {TimelineHoursProps} from './TimelineHours';
 import EventBlock, {Event, PackedEvent} from './EventBlock';
@@ -101,6 +101,7 @@ export interface TimelineProps {
    * Range of available hours
    */
   unavailableHours?: UnavailableHours[];
+  backgroundFillHours?: backgroundHours[];
   /**
    * Background color for unavailable hours
    */
@@ -142,6 +143,7 @@ const Timeline = (props: TimelineProps) => {
     overlapEventsSpacing = 0,
     rightEdgeSpacing = 0,
     unavailableHours,
+    backgroundFillHours,
     unavailableHoursColor,
     eventTapped,
     numberOfDays = 1,
@@ -265,6 +267,7 @@ const Timeline = (props: TimelineProps) => {
         format24h={format24h}
         styles={styles.current}
         unavailableHours={unavailableHours}
+        backgroundFillHours={backgroundFillHours}
         unavailableHoursColor={unavailableHoursColor}
         onBackgroundLongPress={onBackgroundLongPress}
         onBackgroundLongPressOut={onBackgroundLongPressOut}

@@ -17,6 +17,12 @@ export interface UnavailableHours {
   end: number;
 }
 
+export interface backgroundHours {
+  start: number;
+  end: number;
+  backgroundColor: string;
+}
+
 interface UnavailableHoursOptions {
   hourBlockHeight?: number;
   dayStart: number;
@@ -171,6 +177,40 @@ export function buildUnavailableHoursBlocks(
         return {
           top: ((startFixed - dayStart) / totalDayHours) * totalDayHeight,
           height: (endFixed - startFixed) * hourBlockHeight
+        };
+      })
+      // Note: this filter falsy values (undefined blocks)
+      .filter(Boolean)
+  );
+}
+
+export function buildBackgroundFillHoursBlocks(
+  backgroundFillHours: backgroundHours[] = [],
+  options: UnavailableHoursOptions
+) {
+  const {hourBlockHeight = HOUR_BLOCK_HEIGHT, dayStart = 0, dayEnd = 24} = options || {};
+  const totalDayHours = dayEnd - dayStart;
+  const totalDayHeight = (dayEnd - dayStart) * hourBlockHeight;
+  return (
+    backgroundFillHours
+      .map(hours => {
+        if (!inRange(hours.start, 0, 25) || !inRange(hours.end, 0, 25)) {
+          console.error('Calendar Timeline fill background is invalid. Hours should be between 0 and 24');
+          return undefined;
+        }
+
+        if (hours.start >= hours.end) {
+          console.error('Calendar Timeline fill background is invalid. start hour should be earlier than end hour');
+          return undefined;
+        }
+
+        const startFixed = Math.max(hours.start, dayStart);
+        const endFixed = Math.min(hours.end, dayEnd);
+
+        return {
+          top: ((startFixed - dayStart) / totalDayHours) * totalDayHeight,
+          height: (endFixed - startFixed) * hourBlockHeight,
+          backgroundColor: hours.backgroundColor
         };
       })
       // Note: this filter falsy values (undefined blocks)
