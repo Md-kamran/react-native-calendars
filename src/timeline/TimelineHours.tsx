@@ -2,7 +2,7 @@ import range from 'lodash/range';
 import times from 'lodash/times';
 
 import React, {useCallback, useMemo, useRef} from 'react';
-import {View, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet} from 'react-native';
+import {View, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet, Pressable} from 'react-native';
 
 import constants from '../commons/constants';
 import {buildTimeString, calcTimeByPosition, calcDateByPosition} from './helpers/presenter';
@@ -30,6 +30,7 @@ export interface TimelineHoursProps {
   timelineLeftInset?: number;
   testID?: string;
   halfHourLines?: boolean;
+  unavailableHoursClick?: Function;
 }
 
 const dimensionWidth = constants.screenWidth;
@@ -51,7 +52,8 @@ const TimelineHours = (props: TimelineHoursProps) => {
     numberOfDays = 1,
     timelineLeftInset = 0,
     testID,
-    halfHourLines = true
+    halfHourLines = true,
+    unavailableHoursClick = () => {}
   } = props;
 
   const dynamicBackgroundHoursBlocks = (data: any) =>
@@ -72,6 +74,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
               (HOUR_BLOCK_HEIGHT * (end - start)),
             height: (endHour - startHour) * HOUR_BLOCK_HEIGHT,
             backgroundColor: block?.color,
+            ...(block?.lineColor && { lineColor: block?.lineColor }),
           };
         });
       }
@@ -145,15 +148,30 @@ const TimelineHours = (props: TimelineHoursProps) => {
         </View>
       </TouchableWithoutFeedback>
       {unavailableHoursBlocks.map((block, index) => (
-        <View
+        <Pressable
+          onPress={unavailableHoursClick && unavailableHoursClick}
           key={index}
           style={[
             styles.unavailableHoursBlock,
             block,
-            unavailableHoursColor ? {backgroundColor: unavailableHoursColor} : undefined,
             {left: timelineLeftInset}
           ]}
-        ></View>
+        >
+          <View style={[styles.patternContainer,{backgroundColor: block.backgroundColor}]}>
+            {Array.from({ length: 200 }).map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.horizontalLine,
+                  {
+                    top: index * 10,
+                    backgroundColor: block?.lineColor,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+        </Pressable>
       ))}
 
       {hours.map(({timeText, time}, index) => {

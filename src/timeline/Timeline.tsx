@@ -120,6 +120,7 @@ export interface TimelineProps {
    * Controls whether half hour tick lines should show up or not
   */
   halfHourLines?: boolean;
+  unavailableHoursClick?: Function;
 }
 
 const Timeline = (props: TimelineProps) => {
@@ -132,6 +133,7 @@ const Timeline = (props: TimelineProps) => {
     onEventPress,
     onBackgroundLongPress,
     onBackgroundLongPressOut,
+    unavailableHoursClick,
     renderEvent,
     theme,
     scrollToFirst,
@@ -271,6 +273,7 @@ const Timeline = (props: TimelineProps) => {
         unavailableHoursColor={unavailableHoursColor}
         onBackgroundLongPress={onBackgroundLongPress}
         onBackgroundLongPressOut={onBackgroundLongPressOut}
+        unavailableHoursClick={unavailableHoursClick}
         width={width}
         numberOfDays={numberOfDays}
         timelineLeftInset={timelineLeftInset}

@@ -71,7 +71,17 @@ export default function styleConstructor(theme: Theme = {}, calendarHeight: numb
     unavailableHoursBlock: {
       position: 'absolute',
       right: 0,
-      backgroundColor: UNAVAILABLE_HOURS_BLOCK_COLOR
+    },
+    patternContainer: {
+      position: 'relative', 
+      overflow: 'hidden',
+      height: '100%',
+      zIndex: 10
+    },
+    horizontalLine: {
+      height: 1, 
+      width: '100%', 
+      position: 'absolute',
     },
     backgroundFillHoursBlock: {
       position: 'absolute',
