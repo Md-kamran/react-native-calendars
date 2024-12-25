@@ -79,10 +79,7 @@ export default function styleConstructor(theme: Theme = {}, calendarHeight: numb
     },
     event: {
       opacity: 1,
-      padding: 4,
       backgroundColor: '#F0F4FF',
-      borderColor: '#DDE5FD',
-      borderWidth: 1,
       ...appStyle.event,
       position: 'absolute',
       flex: 1,
@@ -90,7 +87,6 @@ export default function styleConstructor(theme: Theme = {}, calendarHeight: numb
       alignItems: 'flex-start',
       overflow: 'hidden',
       minHeight: 25,
-      borderRadius: 4,
       marginLeft: 2,
     },
     eventTitle: {

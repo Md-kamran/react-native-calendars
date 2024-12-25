@@ -6,7 +6,7 @@ import {View, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet} 
 
 import constants from '../commons/constants';
 import {buildTimeString, calcTimeByPosition, calcDateByPosition} from './helpers/presenter';
-import {backgroundHours, buildBackgroundFillHoursBlocks, buildUnavailableHoursBlocks, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
+import {backgroundHours, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
 
 interface NewEventTime {
   hour: number;
@@ -54,11 +54,37 @@ const TimelineHours = (props: TimelineHoursProps) => {
     halfHourLines = true
   } = props;
 
+  const dynamicBackgroundHoursBlocks = (data: any) =>
+    useMemo(() => {
+      if (data && Array.isArray(data)) {
+        const currentDateBlocks = data?.filter(block =>
+          block?.start?.startsWith(date || ''),
+        );
+        return currentDateBlocks.map(block => {
+          const startTime = new Date(block?.start);
+          const endTime = new Date(block?.end);
+          const startHour =
+            startTime?.getHours() + startTime?.getMinutes() / 60;
+          const endHour = endTime?.getHours() + endTime?.getMinutes() / 60;
+          return {
+            top:
+              ((startHour - start) / (end - start)) *
+              (HOUR_BLOCK_HEIGHT * (end - start)),
+            height: (endHour - startHour) * HOUR_BLOCK_HEIGHT,
+            backgroundColor: block?.color,
+          };
+        });
+      }
+    }, [date, start, end]);
+  
+
   const lastLongPressEventTime = useRef<NewEventTime>();
   // const offset = this.calendarHeight / (end - start);
   const offset = HOUR_BLOCK_HEIGHT;
-  const unavailableHoursBlocks = buildUnavailableHoursBlocks(unavailableHours, {dayStart: start, dayEnd: end});
-  const backgroundHoursBlocks = buildBackgroundFillHoursBlocks(backgroundFillHours, {dayStart: start, dayEnd: end});
+
+  const backgroundHoursBlocks = dynamicBackgroundHoursBlocks(backgroundFillHours);
+  const unavailableHoursBlocks = dynamicBackgroundHoursBlocks(unavailableHours);
+
 
   const hours = useMemo(() => {
     return range(start, end + 1).map(i => {

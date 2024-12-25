@@ -13,14 +13,15 @@ interface PopulateOptions {
 }
 
 export interface UnavailableHours {
-  start: number;
-  end: number;
+  start: string;
+  end: string;
+  color: string;
 }
 
 export interface backgroundHours {
-  start: number;
-  end: number;
-  backgroundColor: string;
+  start: string;
+  end: string;
+  color: string;
 }
 
 interface UnavailableHoursOptions {
