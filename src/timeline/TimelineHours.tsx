@@ -75,6 +75,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
             height: (endHour - startHour) * HOUR_BLOCK_HEIGHT,
             backgroundColor: block?.color,
             ...(block?.lineColor && { lineColor: block?.lineColor }),
+            ...(block?.type && { type: block?.type }),
           };
         });
       }
@@ -131,6 +132,20 @@ const TimelineHours = (props: TimelineHoursProps) => {
     }
   }, [onBackgroundLongPressOut, date]);
 
+  const handleUnavailableHoursClick = useCallback(
+    (event, block) => {
+      const yPosition = event.nativeEvent.locationY;
+      const xPosition = event.nativeEvent.locationX;
+      const {hour, minutes} = calcTimeByPosition(yPosition, HOUR_BLOCK_HEIGHT);
+      const dateByPosition = calcDateByPosition(xPosition, timelineLeftInset, numberOfDays, date);
+      lastLongPressEventTime.current = {hour, minutes, date: dateByPosition};
+
+      const timeString = buildTimeString(hour, minutes, dateByPosition);
+      unavailableHoursClick?.(timeString, lastLongPressEventTime.current, block?.type || 'sd');
+    },
+    [unavailableHoursClick, date]
+  );
+
   return (
     <>
       <TouchableWithoutFeedback onLongPress={handleBackgroundPress} onPressOut={handlePressOut}>
@@ -149,7 +164,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
       </TouchableWithoutFeedback>
       {unavailableHoursBlocks.map((block, index) => (
         <Pressable
-          onPress={unavailableHoursClick && unavailableHoursClick}
+          onPress={(event) => handleUnavailableHoursClick(event, block)}
           key={index}
           style={[
             styles.unavailableHoursBlock,

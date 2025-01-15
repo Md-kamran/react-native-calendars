@@ -17,6 +17,7 @@ export interface UnavailableHours {
   end: string;
   color: string;
   lineColor: string;
+  type: string;
 }
 
 export interface backgroundHours {
