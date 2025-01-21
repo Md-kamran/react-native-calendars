@@ -19,7 +19,7 @@ export interface TimelineHoursProps {
   end?: number;
   date?: string;
   format24h?: boolean;
-  onBackgroundLongPress?: (timeString: string, time: NewEventTime) => void;
+  onBackgroundLongPress?: (timeString: string, time: NewEventTime, type?: string) => void;
   onBackgroundLongPressOut?: (timeString: string, time: NewEventTime) => void;
   unavailableHours?: UnavailableHours[];
   backgroundFillHours?: backgroundHours[];
@@ -132,6 +132,20 @@ const TimelineHours = (props: TimelineHoursProps) => {
     }
   }, [onBackgroundLongPressOut, date]);
 
+  const handleFillBackgroundClick = useCallback(
+    (event, block) => {
+      const yPosition = event.nativeEvent.locationY;
+      const xPosition = event.nativeEvent.locationX;
+      const {hour, minutes} = calcTimeByPosition(yPosition, HOUR_BLOCK_HEIGHT);
+      const dateByPosition = calcDateByPosition(xPosition, timelineLeftInset, numberOfDays, date);
+      lastLongPressEventTime.current = {hour, minutes, date: dateByPosition};
+
+      const timeString = buildTimeString(hour, minutes, dateByPosition);
+      onBackgroundLongPress?.(timeString, lastLongPressEventTime.current, block?.type || '');
+    },
+    [unavailableHoursClick, date]
+  );
+
   const handleUnavailableHoursClick = useCallback(
     (event, block) => {
       const yPosition = event.nativeEvent.locationY;
@@ -141,7 +155,7 @@ const TimelineHours = (props: TimelineHoursProps) => {
       lastLongPressEventTime.current = {hour, minutes, date: dateByPosition};
 
       const timeString = buildTimeString(hour, minutes, dateByPosition);
-      unavailableHoursClick?.(timeString, lastLongPressEventTime.current, block?.type || 'sd');
+      unavailableHoursClick?.(timeString, lastLongPressEventTime.current, block?.type || '');
     },
     [unavailableHoursClick, date]
   );
@@ -151,14 +165,15 @@ const TimelineHours = (props: TimelineHoursProps) => {
       <TouchableWithoutFeedback onLongPress={handleBackgroundPress} onPressOut={handlePressOut}>
         <View style={StyleSheet.absoluteFillObject} >
           {backgroundHoursBlocks.map((block, index) => (
-            <View
+            <Pressable
+              onPress={(event) => handleFillBackgroundClick(event, block)}
               key={index}
               style={[
                 styles.backgroundFillHoursBlock,
                 block,
                 {left: timelineLeftInset}
               ]}
-            ></View>
+            ></Pressable>
           ))}
         </View>
       </TouchableWithoutFeedback>
